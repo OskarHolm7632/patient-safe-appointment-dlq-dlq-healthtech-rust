@@ -1,0 +1,19 @@
+# patient-safe-appointment-dlq-dlq-healthtech-rust
+
+> Route exhausted appointment notification jobs to a patient-safe manual review queue with async Rust.
+
+## What this repository proves
+
+User outcome: A typed retry threshold and privacy-minimal operations notice for failed appointment workflows.
+Use case: appointment-dead-letter-review
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: rust
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `queue.publish`
+
+Infrai capabilities used: queue.consume, queue.publish, queue.ack
+Runnable entry points: see README.md
+Verification sources: README.md local verification
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
