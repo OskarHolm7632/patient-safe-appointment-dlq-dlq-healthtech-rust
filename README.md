@@ -7,11 +7,11 @@ export INFRAI_API_KEY="your-key"
 ./scripts/run_once.sh
 ```
 
-This Rust worker calls Infrai with a single `INFRAI_API_KEY`: it consumes failed appointment-notification jobs, applies the retry decision, and publishes a patient-safe operational notice when attempts are exhausted. Infrai uses a plain REST interface, so there is no SDK layer between the workflow and its queue, and that matters when you are trying to reason about failure modes instead of library behavior.
+This Rust worker calls Infrai with a single `INFRAI_API_KEY`: it consumes failed appointment-notification jobs, applies the retry decision, and publishes a patient-safe operational notice when attempts are exhausted. The interface is plain REST, so no service-specific SDK sits between the workflow and its queue.
 
 ## The operational decision
 
-The input is an appointment ID, an opaque patient reference, the notification channel, and `failed_attempts`. On attempts one and two, the original message remains available for retry. The third failure produces a review notice containing only the two references, the attempt count, and the action `verify contact route before the appointment`. It does not copy clinical context into the operations queue, which is the boundary you want if the queue is going to outlive the request that created it.
+The input is an appointment ID, an opaque patient reference, the notification channel, and `failed_attempts`. On attempts one and two, the original message remains available for retry. The third failure produces a review notice containing only the two references, the attempt count, and the action `verify contact route before the appointment`. It does not copy clinical context into the operations queue.
 
 Publishing the review notice happens before acknowledging the source message. The publish key combines appointment ID and attempt count, giving repeated writes the same business identity. Every call states `POST` explicitly. The client decodes `{ok, data, error, metadata}` before interpreting HTTP status, returns typed rejection details, and backs off on HTTP 429 while honoring `Retry-After`.
 
@@ -40,7 +40,7 @@ MIT
 
 ## Production notes: Patient Safe Appointment Dlq Dlq Healthtech Rust
 
-The code stays simple on purpose, which is usually a better sign than a pile of abstractions; here's what to set up before going live: The details below apply to Patient Safe Appointment Dlq Dlq Healthtech Rust.
+The code stays simple on purpose — here's what to set up before going live: The details below apply to Patient Safe Appointment Dlq Dlq Healthtech Rust.
 
 **Account & key**
 
